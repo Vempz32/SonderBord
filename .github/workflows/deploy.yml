@@ -33,12 +33,12 @@ jobs:
             Library-WebGL-
             Library-
 
-      - name: Build Unit WebGL
+      - name: Build Unity WebGL
         uses: game-ci/unity-builder@v4
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{secrets.UNITY_LICENSE}}
+          UNITY_EMAIL: ${{secrets.UNITY_EMAIL}}
+          UNITY_PASSWORD: ${{secrets.UNITY_PASSWORD}}
         with:
           projectPath: .
           targetPlatform: WebGL
