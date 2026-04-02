@@ -8,7 +8,7 @@ using UnityEditor.PackageManager;
 public class CIBuilder 
 {
   [MenuItem("CI/BuildWebGL")]
-  public static void PerformWebGlBuild()
+  public static void PerformWebGLBuild()
   {
     try
     {
