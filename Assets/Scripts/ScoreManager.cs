@@ -14,6 +14,9 @@ public class ScoreManager : MonoBehaviour
 
     private int currentScore = 0;
     private int highScore = 0;
+    
+    private float sessionStartTime = 0f;
+    private int pipesPassed = 0;
 
     private void Awake()
     {
@@ -30,12 +33,17 @@ public class ScoreManager : MonoBehaviour
     public void ResetScore()
     {
         currentScore = 0;
+        
+        pipesPassed = 0;
+        sessionStartTime = Time.time;
+        
         UpdateScoreDisplay();
     }
 
     public void AddPoint()
     {
         currentScore++;
+        pipesPassed++;
         UpdateScoreDisplay();
     }
 
@@ -53,6 +61,12 @@ public class ScoreManager : MonoBehaviour
 
         if (finalScoreText != null)
             finalScoreText.text = $"Score: {currentScore}\nBest: {highScore}";
+
+        if (FirebaseManager.Instance != null)
+        {
+            int duration = Mathf.RoundToInt(Time.time - sessionStartTime);
+            FirebaseManager.Instance.SubmitScore(currentScore, pipesPassed, duration);
+        }
     }
 
     private void UpdateScoreDisplay()
