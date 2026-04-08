@@ -1,4 +1,4 @@
-var FirebaseBridge =
+var FirebaseBridgeLib =
 {
     InitFirebaseBridge: function () {
         if (!window.__fbAuth) {
