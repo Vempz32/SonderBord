@@ -42,10 +42,10 @@ jobs:
         with:
           projectPath: .
           targetPlatform: WebGL
-          buildsPath: builds
+          buildsPath: Builds
 
       - name: Debug output structure
-        run: find builds/ -type f | sort
+        run: find Builds/ -type f | sort
 
       - name: Set artifact name
         id: set-artifact-name
@@ -55,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.set-artifact-name.outputs.name }}
-          path: builds/WebGL/
+          path: Builds/WebGL/
           retention-days: 7
 
   deploy: 
