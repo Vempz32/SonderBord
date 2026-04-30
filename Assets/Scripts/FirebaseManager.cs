@@ -14,13 +14,13 @@ public class FirebaseManager : MonoBehaviour
     // Getting and collection all the functions from the jslib file
     #if UNITY_WEBGL && !UNITY_EDITOR
     [DllImport("__Internal") ] private static extern void InitFirebaseBridge();
-    [DllImport("__Internal") ] private static extern void SubmitScoreToFirestore(string jsonBody);
+    [DllImport("__Internal") ] private static extern void SubmitGameSessionToFirestore(string jsonBody);
     #else
     private static void InitFirebaseBridge()
         => Debug.Log("InitFirebaseBridge Stub");
     
-    private static void SubmitScoreToFirestore(string jsonBody)
-    => Debug.Log("SubmitScoreToFirestore Stub");
+    private static void SubmitGameSessionToFirestore(string jsonBody)
+        => Debug.Log($"SubmitGameSessionToFirestore Stub: {jsonBody}");
     #endif
     
     private void Awake()
@@ -68,7 +68,20 @@ public class FirebaseManager : MonoBehaviour
         };
         
         string json = JsonUtility.ToJson(payload);
-        SubmitScoreToFirestore(json);
+        SubmitGameSessionToFirestore(json);
+    }
+
+    public void SubmitGameSession(object session)
+    {
+        if (!IsAuthenticated)
+        {
+            Debug.Log("Not authenticated. Game session not submitted");
+            return;
+        }
+
+        string json = JsonUtility.ToJson(session);
+        Debug.Log($"Submitting game session: {json}");
+        SubmitGameSessionToFirestore(json);
     }
     [System.Serializable]
     private class AuthPayload

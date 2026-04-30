@@ -43,14 +43,14 @@ var FirebaseBridgeLib =
         }
     },
 
-    SubmitScoreToFirestore: function (jsonBodyPtr) {
+    SubmitGameSessionToFirestore: function (jsonBodyPtr) {
         var jsonBody = UTF8ToString(jsonBodyPtr);
         var parsed = JSON.parse(jsonBody);
 
         var auth = window.__fbAuth;
 
         if (!auth || !auth.idToken || !auth.projectId) {
-            console.warn("No Auth, score not submitted");
+            console.warn("No Auth, game session not submitted");
             return;
         }
 
@@ -61,26 +61,31 @@ var FirebaseBridgeLib =
             "Authorization": "Bearer " + auth.idToken
         };
 
-        var scoreDoc = {
+        // Create comprehensive game session document for dashboard tracking
+        var sessionDoc = {
             fields: {
                 userId: { stringValue: auth.uid },
+                displayName: { stringValue: parsed.displayName || "Player" },
                 score: { integerValue: String(parsed.score) },
-                pipes: { integerValue: String(parsed.score) },
-                duration: { integerValue: String(parsed.duration) },
-                timestamp: { timestampValue: new Date().toISOString() }
-
+                pipesPassed: { integerValue: String(parsed.pipesPassed) },
+                durationSeconds: { integerValue: String(parsed.durationSeconds) },
+                startTime: { timestampValue: parsed.startTime },
+                endTime: { timestampValue: parsed.endTime },
+                submittedAt: { timestampValue: new Date().toISOString() }
             }
-        }
+        };
 
-        fetch(baseUrl + "/scores", {
+        // POST to gameSessions collection for comprehensive tracking
+        fetch(baseUrl + "/gameSessions", {
             method: "POST",
             headers: headers,
-            body: JSON.stringify(scoreDoc)
+            body: JSON.stringify(sessionDoc)
         })
             .then(function (res) { return res.json(); })
-            .then(function (data) { console.log("Score saved: ", data.name); })
-            .catch(function (err) { console.error("Score POST failed", err); })
+            .then(function (data) { console.log("Game session saved: ", data.name); })
+            .catch(function (err) { console.error("Game session POST failed", err); });
 
+        // Update user profile stats
         var userDocUrl = baseUrl + "/users/" + auth.uid;
 
         fetch(userDocUrl, {
@@ -89,34 +94,40 @@ var FirebaseBridgeLib =
         })
             .then(function (res) { return res.json(); })
             .then(function (doc) {
-                var currentHigh = 0
+                var currentHigh = 0;
                 var currentGames = 0;
+                var totalScore = 0;
 
                 if (doc.fields) {
-                    if (doc.fields.highscore) currentHigh = parseInt(doc.fields.highscore.integerValue || "0");
+                    if (doc.fields.highScore) currentHigh = parseInt(doc.fields.highScore.integerValue || "0");
                     if (doc.fields.gamesPlayed) currentGames = parseInt(doc.fields.gamesPlayed.integerValue || "0");
+                    if (doc.fields.totalScore) totalScore = parseInt(doc.fields.totalScore.integerValue || "0");
                 }
 
                 var newHigh = Math.max(currentHigh, parsed.score);
                 var newGames = currentGames + 1;
+                var newTotalScore = totalScore + parsed.score;
 
                 var patchBody = {
                     fields: {
-                        highscore: { integerValue: String(newHigh) },
-                        gamesPlayed: { integerValue: String(newGames) }
+                        highScore: { integerValue: String(newHigh) },
+                        gamesPlayed: { integerValue: String(newGames) },
+                        totalScore: { integerValue: String(newTotalScore) },
+                        averageScore: { doubleValue: (newTotalScore / newGames).toFixed(2) },
+                        lastGameScore: { integerValue: String(parsed.score) },
+                        lastPlayedAt: { timestampValue: new Date().toISOString() }
                     }
                 };
 
-                return fetch(userDocUrl + "?updateMask.fieldPaths=highScore&updateMask.fieldPaths=gamesPlayed", {
+                return fetch(userDocUrl + "?updateMask.fieldPaths=highScore&updateMask.fieldPaths=gamesPlayed&updateMask.fieldPaths=totalScore&updateMask.fieldPaths=averageScore&updateMask.fieldPaths=lastGameScore&updateMask.fieldPaths=lastPlayedAt", {
                     method: "PATCH",
                     headers: headers,
                     body: JSON.stringify(patchBody)
                 });
-
             })
             .then(function (res) { return res.json(); })
             .then(function (data) { console.log("User Profile Updated"); })
-            .catch(function (err) { console.error("user PATCH failed"), err });
+            .catch(function (err) { console.error("User PATCH failed", err); });
     }
 };
 

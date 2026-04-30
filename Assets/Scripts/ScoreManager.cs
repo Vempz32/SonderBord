@@ -17,6 +17,18 @@ public class ScoreManager : MonoBehaviour
     
     private float sessionStartTime = 0f;
     private int pipesPassed = 0;
+    
+    [System.Serializable]
+    public class GameSession
+    {
+        public string startTime;
+        public string endTime;
+        public int score;
+        public int pipesPassed;
+        public int durationSeconds;
+        public string displayName;
+        public string userId;
+    }
 
     private void Awake()
     {
@@ -64,8 +76,21 @@ public class ScoreManager : MonoBehaviour
 
         if (FirebaseManager.Instance != null)
         {
-            int duration = Mathf.RoundToInt(Time.time - sessionStartTime);
-            FirebaseManager.Instance.SubmitScore(currentScore, pipesPassed, duration);
+            int durationSeconds = Mathf.RoundToInt(Time.time - sessionStartTime);
+            
+            // Create a comprehensive game session object for dashboard tracking
+            GameSession session = new GameSession
+            {
+                startTime = System.DateTime.UtcNow.AddSeconds(-durationSeconds).ToString("o"),
+                endTime = System.DateTime.UtcNow.ToString("o"),
+                score = currentScore,
+                pipesPassed = pipesPassed,
+                durationSeconds = durationSeconds,
+                displayName = FirebaseManager.Instance.DisplayName,
+                userId = FirebaseManager.Instance.UserId
+            };
+            
+            FirebaseManager.Instance.SubmitGameSession(session);
         }
     }
 
