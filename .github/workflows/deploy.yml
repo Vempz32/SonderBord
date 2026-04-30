@@ -5,14 +5,14 @@ on:
     branches:
       - main
   workflow_dispatch:
-  
+
 concurrency:
-  group: ${{github.workflow}} -${{ github.ref }}  
+  group: ${{github.workflow}} -${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:  
-    name: Build Unity WeblGL
+  build:
+    name: Build Unity WebGL
     runs-on: ubuntu-latest
 
     outputs:
@@ -21,14 +21,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with: 
+        with:
           lfs: true
-          
+
       - name: Cache Unity Library
         uses: actions/cache@v3
         with:
           path: Library
-          key: Library-WebGL-${{ hashFiles('SponderBird/Assets/**', 'SponderBird/Packages/**', 'SponderBird/ProjectSettings/**') }}
+          key: Library-WebGL-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
             Library-WebGL-
             Library-
@@ -55,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.set-artifact-name.outputs.name }}
-          path: builds/WebGL/WebGL
+          path: builds/WebGL/
           retention-days: 7
 
   deploy: 
@@ -74,13 +74,13 @@ jobs:
     steps:
       - name: Download WebGL Build
         uses: actions/download-artifact@v4
-        with: 
+        with:
           name: ${{ needs.build.outputs.artifact-name }}
           path: ./game
 
       - name: Upload to Github Pages artifact store
         uses: actions/upload-pages-artifact@v3
-        with: 
+        with:
           path: ./game
 
       - name: Deploy to Github Page
@@ -91,4 +91,3 @@ jobs:
         run: |
           echo "Game is live at"
           echo " ${{steps.deploy.outputs.page_url}} "
-
