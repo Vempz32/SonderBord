@@ -32,6 +32,11 @@ public class FirebaseManager : MonoBehaviour
         }
         Instance = this;
     }
+
+    private void Start()
+    {
+        InitFirebaseBridge();
+    }
 // we get the information from the jslib and stores it in the game
     public void OnAuthReceived(string json)
     {

@@ -83,7 +83,7 @@ jobs:
         with: 
           path: ./game
 
-      - name: Deploy to Github Pages
+      - name: Deploy to Github Page
         id: deploy
         uses: actions/deploy-pages@v4
 
