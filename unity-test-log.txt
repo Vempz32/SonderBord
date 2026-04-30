@@ -1,0 +1,25 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+Built from '6000.3/staging' branch; Version is '6000.3.8f1 (1c7db571dde0) revision 1867189'; Using compiler version '194234433'; Build Type 'Release'
+OS: 'Windows 11  (10.0.26200) Education' Language: 'en' Physical Memory: 32450 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-pg29tyler" at "2026-04-08T23:11:01.6557074Z"
+System  architecture: x64
+Process architecture: x64
+Date: 2026-04-08T23:11:01Z
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.3.8f1\Editor\Unity.exe
+-batchmode
+-nographics
+-runTests
+-projectPath
+C:\Users\Public\Repos\SponderBird
+-testPlatform
+EditMode
+-testResults
+C:\Users\Public\Repos\SponderBird\results-editmode.xml
+-logfile
+C:\Users\Public\Repos\SponderBird\unity-test-log.txt
+Successfully changed project path to: C:\Users\Public\Repos\SponderBird
+C:/Users/Public/Repos/SponderBird
+Exiting without the bug reporter. Application will terminate with return code 1
