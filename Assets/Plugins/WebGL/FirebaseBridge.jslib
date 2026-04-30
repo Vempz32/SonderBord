@@ -37,13 +37,13 @@ var FirebaseBridgeLib =
         }
 
         // we can re login in when we restart the game so you dont have to get all the information agian you can just get it from the window 
-        if (window.__fbAuth && window.__fbAuth.uid && wuindow.__fbauth.idToken) {
+        if (window.__fbAuth && window.__fbAuth.uid && window.__fbAuth.idToken) {
             var payload = JSON.stringify(window.__fbAuth);
             SendMessage("GameManager", "OnAuthReceived", payload);
         }
     },
 
-    SumbitScoreToFirestore: function (jsonBodyPtr) {
+    SubmitScoreToFirestore: function (jsonBodyPtr) {
         var jsonBody = UTF8ToString(jsonBodyPtr);
         var parsed = JSON.parse(jsonBody);
 
@@ -54,11 +54,11 @@ var FirebaseBridgeLib =
             return;
         }
 
-        var baseUrl = "https://firestore.googleapis.com/v1/projects/" + auth.projectId + "/databases/(default)/docuents";
+        var baseUrl = "https://firestore.googleapis.com/v1/projects/" + auth.projectId + "/databases/(default)/documents";
 
         var headers = {
             "Content-Type": "application/json",
-            "Authorization": "Bearer" + auth.idToken
+            "Authorization": "Bearer " + auth.idToken
         };
 
         var scoreDoc = {
@@ -107,7 +107,7 @@ var FirebaseBridgeLib =
                     }
                 };
 
-                return fetch(userDocUrl = "?updateMask.fieldPaths=highScore&updateMask.fieldPaths=gamesPlayed", {
+                return fetch(userDocUrl + "?updateMask.fieldPaths=highScore&updateMask.fieldPaths=gamesPlayed", {
                     method: "PATCH",
                     headers: headers,
                     body: JSON.stringify(patchBody)
@@ -121,4 +121,4 @@ var FirebaseBridgeLib =
 };
 
 // merging it into unity so we can access it in unity
-mergerInto(LibraryManager.library, FirebaseBridgeLib);
+mergeInto(LibraryManager.library, FirebaseBridgeLib);
