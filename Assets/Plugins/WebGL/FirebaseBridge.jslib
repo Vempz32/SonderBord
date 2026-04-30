@@ -13,7 +13,7 @@ var FirebaseBridgeLib =
             window.__fbAuth.projectId = data.projectId || "";
 
             var payload = JSON.stringify(window.__fbAuth);
-            SendMessage("FirebaseManager", "OnAuthReceived", payload);
+            SendMessage("GameManager", "OnAuthReceived", payload);
 
             // acknowledgment that we have gotten authentication 
             if (window.parent && window.parent !== window) {
@@ -39,7 +39,7 @@ var FirebaseBridgeLib =
         // we can re login in when we restart the game so you dont have to get all the information agian you can just get it from the window 
         if (window.__fbAuth && window.__fbAuth.uid && wuindow.__fbauth.idToken) {
             var payload = JSON.stringify(window.__fbAuth);
-            SendMessage("FirebaseManager", "OnAuthReceived", payload);
+            SendMessage("GameManager", "OnAuthReceived", payload);
         }
     },
 
@@ -54,7 +54,7 @@ var FirebaseBridgeLib =
             return;
         }
 
-        var baseUrl = "https://firestore.googleapis.com/v1/projects" + auth.projectId + "/databases/(default)/docuents";
+        var baseUrl = "https://firestore.googleapis.com/v1/projects/" + auth.projectId + "/databases/(default)/docuents";
 
         var headers = {
             "Content-Type": "application/json",
@@ -116,7 +116,7 @@ var FirebaseBridgeLib =
             })
             .then(function (res) { return res.json(); })
             .then(function (data) { console.log("User Profile Updated"); })
-            .catch(function (err) { console.error("user PATCH failed"), e });
+            .catch(function (err) { console.error("user PATCH failed"), err });
     }
 };
 
